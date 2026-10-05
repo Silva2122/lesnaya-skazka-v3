@@ -365,7 +365,7 @@
       // контекст кнопки: у каждого блока свой заголовок и мотивация в форме
       var h = doc.querySelector('.cb-head h3'), p = doc.querySelector('.cb-head .note');
       if (h) h.textContent = cb.dataset.ctaTitle || 'Обратный звонок';
-      if (p) p.textContent = cb.dataset.ctaNote || 'Наш менеджер свяжется с вами в ближайшее время.';
+      if (p) p.textContent = cb.dataset.ctaNote || 'Наш менеджер свяжется с\u00a0вами в\u00a0ближайшее\u00a0время.';
     }
   });
 
@@ -471,11 +471,11 @@
     fp.className = 'fp';
     fp.hidden = true;
     fp.innerHTML =
-      '<div class="fp-box" role="dialog" aria-modal="true" aria-label="Планировки и цены">'
+      '<div class="fp-box" role="dialog" aria-modal="true" aria-label="Планировки и\u00a0цены">'
       + '<button class="doc-x fp-x" aria-label="Закрыть">&#10005;</button>'
       + '<div class="fp-head">'
       + '<div class="lbl">' + SPRIG + 'Квартиры</div>'
-      + '<h3>Планировки и цены</h3>'
+      + '<h3>Планировки и\u00a0цены</h3>'
       + '<p class="note fp-sub"></p>'
       + '</div>'
       + '<div class="fp-filters"></div>'
@@ -526,13 +526,13 @@
     var houses = [{ k: 'house', v: 0, t: 'Все' }].concat(fpData.houses.filter(function (h) {
       return h.free;
     }).map(function (h) {
-      return { k: 'house', v: h.h, t: 'Дом ' + h.m, n: fpCount('house', 'h', h.h) };
+      return { k: 'house', v: h.h, t: 'Дом\u00a0' + h.m, n: fpCount('house', 'h', h.h) };
     }));
     var floors = [{ k: 'floor', v: 0, t: 'Любой' }].concat([1, 2, 3, 4, 5, 6, 7].map(function (n) {
       return { k: 'floor', v: n, t: n, n: fpCount('floor', 'f', n) };
     }));
     var tags = [{ k: 'tag', v: '', t: 'Все' }].concat(
-      ['С видом на лес', 'Двухуровневые', 'С ремонтом'].map(function (t) {
+      ['С\u00a0видом на\u00a0лес', 'Двухуровневые', 'С\u00a0ремонтом'].map(function (t) {
         return { k: 'tag', v: t, t: t, n: fpCount('tag', 't', t) };
       }));
     f.innerHTML = fpChips('Комнат', rooms, fpQ.rooms)
@@ -540,7 +540,7 @@
       + fpChips('Этаж', floors, fpQ.floor)
       + fpChips('Особенности', tags, fpQ.tag)
       + '<div class="fp-frow"><span class="fp-flabel">Сортировка</span><div class="fp-chips">'
-      + [{ v: 'p', t: 'По цене' }, { v: 'a', t: 'По площади' }, { v: 'f', t: 'По этажу' }]
+      + [{ v: 'p', t: 'По\u00a0цене' }, { v: 'a', t: 'По\u00a0площади' }, { v: 'f', t: 'По\u00a0этажу' }]
         .map(function (o) {
           return '<button class="fp-chip' + (fpQ.sort === o.v ? ' on' : '')
             + '" data-f="sort" data-v="' + o.v + '">' + o.t + '</button>';
@@ -559,10 +559,10 @@
     var h = fpData.houses[x.h - 1];
     return '<button class="fp-card" data-id="' + x.id + '">'
       + '<span class="fp-card-r">' + roomWord(x.r) + '</span>'
-      + '<span class="fp-card-a">' + area(x.a) + ' м²</span>'
-      + '<span class="fp-card-p">' + num(x.p) + ' ₽</span>'
-      + '<span class="fp-card-m">Дом ' + h.m + ' · ' + x.f + ' этаж из ' + x.fmax
-      + (h.sections.length > 1 ? ' · ' + x.s + ' секция' : '') + '</span>'
+      + '<span class="fp-card-a">' + area(x.a) + '\u00a0м²</span>'
+      + '<span class="fp-card-p">' + num(x.p) + '\u00a0₽</span>'
+      + '<span class="fp-card-m">Дом\u00a0' + h.m + ' · ' + x.f + '\u00a0этаж из\u00a0' + x.fmax
+      + (h.sections.length > 1 ? ' · ' + x.s + '\u00a0секция' : '') + '</span>'
       + (x.t.length ? '<span class="fp-card-t">' + x.t.map(function (t) {
         return '<i>' + t + '</i>';
       }).join('') + '</span>' : '')
@@ -575,8 +575,8 @@
     var min = rows.length ? Math.min.apply(null, rows.map(function (x) { return x.p; })) : 0;
     fp.querySelector('.fp-count').innerHTML = rows.length
       ? '<b>' + rows.length + '</b> ' + plural(rows.length, ['квартира', 'квартиры', 'квартир'])
-        + ' · от ' + num(min) + ' ₽'
-      : 'По этим параметрам ничего не нашлось — попробуйте снять фильтры.';
+        + ' · от\u00a0' + num(min) + '\u00a0₽'
+      : 'По\u00a0этим параметрам ничего не\u00a0нашлось\u00a0— попробуйте снять\u00a0фильтры.';
     fp.querySelector('.fp-list').innerHTML = rows.slice(0, fpShown).map(fpCard).join('');
     fp.querySelector('.fp-more').innerHTML = rows.length > fpShown
       ? '<button class="fp-morebtn" data-more="1">Показать ещё '
@@ -597,37 +597,37 @@
     if (!x) return;
     var h = fpData.houses[x.h - 1];
     var rows = [
-      ['Площадь', area(x.a) + ' м²'],
+      ['Площадь', area(x.a) + '\u00a0м²'],
       ['Комнат', x.r],
       ['Этаж', x.f + ' из ' + x.fmax],
-      ['Дом', h.m + (h.sections.length > 1 ? ', секция ' + x.s : '')],
+      ['Дом', h.m + (h.sections.length > 1 ? ', секция\u00a0' + x.s : '')],
       ['Адрес', h.addr || 'Присваивается после ввода'],
       ['Готовность', h.ready],
-      ['Балкон', x.b === 'Балкон' ? 'Есть' : (x.b === 'Больше 2' ? 'Два и более' : x.b)],
-      ['Санузел', x.bath === 'Более 2' ? 'Два и более' : x.bath],
-      ['Отделка', x.fin || 'Без отделки'],
-      ['Цена за м²', num(Math.round(x.p / x.a)) + ' ₽']
+      ['Балкон', x.b === 'Балкон' ? 'Есть' : (x.b === 'Больше 2' ? 'Два и\u00a0более' : x.b)],
+      ['Санузел', x.bath === 'Более 2' ? 'Два и\u00a0более' : x.bath],
+      ['Отделка', x.fin || 'Без\u00a0отделки'],
+      ['Цена за\u00a0м²', num(Math.round(x.p / x.a)) + '\u00a0₽']
     ];
     var d = fp.querySelector('.fp-detail');
-    d.innerHTML = '<button class="fp-back" data-back="1">← Ко всем квартирам</button>'
+    d.innerHTML = '<button class="fp-back" data-back="1">← Ко\u00a0всем квартирам</button>'
       + '<div class="fp-dgrid">'
       + '<figure class="fp-plan"><img loading="lazy" decoding="async" src="images/floor/'
       + x.fp + '.webp" alt="План этажа дома ' + h.m + '">'
       + '<figcaption class="note">'
-      + (x.fpf === x.f ? 'План ' + x.f + ' этажа' : 'План типового ' + x.fpf + ' этажа')
-      + ' · дом ' + h.m
-      + (h.sections.length > 1 ? ', секция ' + x.s : '')
-      + '. Ваша квартира на плане — ' + area(x.a) + ' м².</figcaption></figure>'
+      + (x.fpf === x.f ? 'План ' + x.f + '\u00a0этажа' : 'План типового ' + x.fpf + '\u00a0этажа')
+      + ' · дом\u00a0' + h.m
+      + (h.sections.length > 1 ? ', секция\u00a0' + x.s : '')
+      + '. Ваша квартира на\u00a0плане\u00a0— ' + area(x.a) + '\u00a0м².</figcaption></figure>'
       + '<div class="fp-dinfo">'
       + '<div class="lbl">' + SPRIG + 'Квартира</div>'
-      + '<h4>' + roomWord(x.r) + ' ' + area(x.a) + ' м²</h4>'
-      + '<div class="fp-dprice">' + num(x.p) + ' ₽</div>'
+      + '<h4>' + roomWord(x.r) + ' ' + area(x.a) + '\u00a0м²</h4>'
+      + '<div class="fp-dprice">' + num(x.p) + '\u00a0₽</div>'
       + '<dl class="fp-specs">' + rows.map(function (r) {
         return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
       }).join('') + '</dl>'
       + '<button class="cb-submit fp-req" data-callback>'
       + '<span>Забронировать просмотр</span><i class="cb-arrow">→</i></button>'
-      + '<p class="note">Менеджер пришлёт поэтажный план этой квартиры и актуальную цену.</p>'
+      + '<p class="note">Менеджер пришлёт поэтажный план этой квартиры и\u00a0актуальную цену.</p>'
       + '</div></div>';
     d.hidden = false;
     fp.querySelector('.fp-scroll').hidden = true;
@@ -672,12 +672,12 @@
     fetch('assets/data/flats.json').then(function (r) { return r.json(); }).then(function (j) {
       fpData = j;
       fp.querySelector('.fp-sub').textContent = j.flats.length
-        + ' свободных квартир в ' + j.houses.filter(function (h) { return h.free; }).length
-        + ' домах. Актуально на ' + j.updated.split('-').reverse().join('.') + '.';
+        + ' свободных квартир в\u00a0' + j.houses.filter(function (h) { return h.free; }).length
+        + ' домах. Актуально на\u00a0' + j.updated.split('-').reverse().join('.') + '.';
       fpRender();
     })['catch'](function () {
       fp.querySelector('.fp-count').textContent =
-        'Не удалось загрузить каталог. Позвоните нам — подберём вручную.';
+        'Не\u00a0удалось загрузить каталог. Позвоните нам\u00a0— подберём\u00a0вручную.';
     });
   }
 
@@ -708,29 +708,29 @@
   var WALK = [
     {
       img: 'images/g12-lg.webp',
-      alt: 'Вид с высоты: комплекс, Светлогорск и Балтийское море на горизонте',
-      cap: 'С верхних этажей видно Светлогорск и полосу Балтики — между ними только сосновый бор.',
+      alt: 'Вид с\u00a0высоты: комплекс, Светлогорск и\u00a0Балтийское море на\u00a0горизонте',
+      cap: 'С\u00a0верхних этажей видно Светлогорск и\u00a0полосу Балтики\u00a0— между ними только сосновый\u00a0бор.',
       pins: [
-        { x: 24, y: 6, dir: 'down', t: 'Балтийское море', d: '2,0 км' },
-        { x: 42, y: 11, dir: 'down', t: 'Центр Светлогорска', d: '1,8 км' },
-        { x: 52, y: 44, dir: 'up', t: 'ЖК «Лесная сказка»', d: '' }
+        { x: 24, y: 6, dir: 'down', t: 'Балтийское\u00a0море', d: '2,0\u00a0км' },
+        { x: 42, y: 11, dir: 'down', t: 'Центр\u00a0Светлогорска', d: '1,8\u00a0км' },
+        { x: 52, y: 44, dir: 'up', t: 'ЖК\u00a0«Лесная\u00a0сказка»', d: '' }
       ]
     },
     {
       img: 'images/g08-lg.webp',
-      alt: 'Тихое озеро в сосновом лесу рядом с комплексом, съёмка с высоты',
-      cap: 'Тихое озеро — ближайшая к домам вода: лес подходит прямо к берегу.',
+      alt: 'Тихое озеро в\u00a0сосновом лесу рядом с\u00a0комплексом, съёмка с\u00a0высоты',
+      cap: 'Тихое озеро\u00a0— ближайшая к\u00a0домам вода: лес подходит прямо\u00a0к\u00a0берегу.',
       pins: [
-        { x: 52, y: 31, dir: 'down', t: 'Тихое озеро', d: '1,4 км' },
-        { x: 20, y: 64, dir: 'up', t: 'Сосновый бор', d: 'вокруг домов' }
+        { x: 52, y: 31, dir: 'down', t: 'Тихое\u00a0озеро', d: '1,4\u00a0км' },
+        { x: 20, y: 64, dir: 'up', t: 'Сосновый\u00a0бор', d: 'вокруг\u00a0домов' }
       ]
     },
     {
       img: 'images/g10-lg.webp',
-      alt: 'Пешеходная дорожка через сосновый лес рядом с комплексом',
-      cap: 'Пешеходные дорожки проложены прямо через бор — от домов вглубь леса.',
+      alt: 'Пешеходная дорожка через сосновый лес рядом с\u00a0комплексом',
+      cap: 'Пешеходные дорожки проложены прямо через бор\u00a0— от\u00a0домов вглубь\u00a0леса.',
       pins: [
-        { x: 40, y: 60, dir: 'up', t: 'Дорожки через лес', d: '' }
+        { x: 40, y: 60, dir: 'up', t: 'Дорожки\u00a0через\u00a0лес', d: '' }
       ]
     }
   ];
@@ -758,7 +758,7 @@
       var lg = root.querySelector('.walk-legend');
       if (lg) lg.innerHTML = d.pins.map(function (p) {
         return '<div><span>' + SPRIG_PIN + p.t + '</span><span>'
-          + (p.d || 'в кадре') + '</span></div>';
+          + (p.d || 'в\u00a0кадре') + '</span></div>';
       }).join('');
       pins.innerHTML = d.pins.map(function (p) {
         return '<span class="walk-pin ' + (p.dir === 'down' ? 'dn' : 'up')

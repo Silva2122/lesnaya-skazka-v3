@@ -257,7 +257,7 @@ img.ld-on{opacity:1;transition:opacity .45s ease}
 .atmo-sub{margin:40px 0 0;font-size:16px;line-height:1.6;color:rgba(238,228,211,.82);text-shadow:0 1px 18px rgba(0,0,0,.55)}
 @media (max-width:700px){
   .atmo-inner .lbl{margin-bottom:26px}
-  .atmo-inner blockquote br{display:none}
+  .atmo-inner blockquote{font-size:clamp(19px,5.9vw,30px)}
   .atmo-sub{margin-top:26px}
   .atmo-sub br{display:none}
 }
@@ -300,6 +300,9 @@ img.ld-on{opacity:1;transition:opacity .45s ease}
 /* ---- список инфраструктуры ровно по высоте фото ---- */
 .infra-photo{height:clamp(360px,32vw,420px);min-height:0}
 @media (max-width:900px){.infra-photo{height:320px}.infra-list{justify-content:flex-start;gap:22px;height:auto}}
+
+/* ---- слова с дефисом и телефоны, которые нельзя рвать переносом ---- */
+.nw{white-space:nowrap}
 
 /* ---- все фото и фото-блоки: мягкое скругление 10px ---- */
 .rnd,.arc,.fmt-photo,.pick,.gal-card,.promo-stage{border-radius:10px;overflow:hidden}
@@ -351,6 +354,7 @@ img.ld-on{opacity:1;transition:opacity .45s ease}
   transition:background-color .32s ease,color .32s ease,border-color .32s ease}
 .atmo-cta .cta-arrow{width:50px;height:50px;border-radius:50%;background:#F7EFE4;color:#223020;
   display:flex;align-items:center;justify-content:center;font-size:16px}
+@media (max-width:400px){.atmo-cta .cta-label-ghost{padding:15px 20px;white-space:nowrap}}
 
 /* ---- попап: крупнее, заголовок и описание по центру ---- */
 .doc-box.cb{max-width:640px}
@@ -611,6 +615,7 @@ img.ld-on{opacity:1;transition:opacity .45s ease}
   .dev-grid,.contact-grid{grid-template-columns:minmax(0,1fr)!important;gap:32px!important}
   .dev-grid>div:last-child{height:360px!important}
   .dev-stats{margin-left:0!important}
+  .dev-stats>div>div:first-child{font-size:clamp(36px,10.5vw,56px)!important}
   .dev-grid p{margin-left:0!important}
 }
 
