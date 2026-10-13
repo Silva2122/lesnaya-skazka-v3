@@ -440,7 +440,7 @@
 
   /* ------------------------------------------------------------ фоновое видео */
   function kickVideo() {
-    ['band-video', 'atmo-video'].forEach(kick1);
+    ['band-video', 'atmo-video', 'pick-video'].forEach(kick1);
   }
 
   function kick1(id) {
