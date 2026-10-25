@@ -844,6 +844,44 @@ html.is-loading{overflow:hidden}
 .rev-link:hover{color:#223020;text-decoration-color:#223020}
 .rev-note{margin:22px 0 0}
 
+/* видеоотзывы: вертикальные карточки как сторис, беззвучный фрагмент крутится сам */
+#reviews .rev-head{align-items:last baseline}
+.vrev-lead{margin:0;max-width:36ch;text-align:right;font-size:15px;line-height:1.55;color:rgba(238,228,211,.72)}
+.vrev-gal{margin-top:64px}
+.vrev-gal .gal-nav{top:42%}
+.vrev{flex:0 0 calc((100% - 60px) / 4);min-width:260px;aspect-ratio:9/16;scroll-snap-align:start;
+  position:relative;padding:0;border:none;border-radius:10px;overflow:hidden;cursor:pointer;
+  background:#2D4A2C;color:#F7EFE4;font:inherit;text-align:left}
+.vrev-loop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.vrev::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(17,30,18,.82) 0%,rgba(17,30,18,0) 42%)}
+.vrev:hover .vrev-loop{transform:scale(1.04)}
+.vrev:active{transform:none}
+.vrev:focus-visible{outline:2px solid #F7EFE4;outline-offset:3px}
+.vrev-dur{position:absolute;top:12px;left:12px;z-index:1;padding:4px 9px;border-radius:999px;
+  background:rgba(17,30,18,.55);backdrop-filter:blur(8px);font-size:12px;letter-spacing:0}
+.vrev-play{position:absolute;top:10px;right:10px;z-index:1;width:44px;height:44px;border-radius:50%;
+  background:rgba(247,239,228,.22);border:1px solid rgba(247,239,228,.5);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;transition:background-color .3s ease,transform .3s ease}
+.vrev-play i{width:0;height:0;margin-left:3px;border-style:solid;border-width:7px 0 7px 12px;
+  border-color:transparent transparent transparent #F7EFE4;transition:border-color .3s ease}
+.vrev:hover .vrev-play{background:#F7EFE4;transform:scale(1.06)}
+.vrev:hover .vrev-play i{border-left-color:#223020}
+.vrev-cap{position:absolute;left:18px;right:18px;bottom:18px;z-index:1}
+.vrev-cap b{font-weight:500;font-size:18px;letter-spacing:0}
+
+/* попап с полным видео */
+.vm video{display:block;height:100%;max-height:calc(100vh - 150px);max-width:100%;aspect-ratio:9/16;
+  border-radius:10px;background:#000;box-shadow:0 30px 90px rgba(0,0,0,.5)}
+
+@media (max-width:760px){
+  .vrev-lead{text-align:left}
+  .vrev-gal{margin-top:40px}
+  .vrev{flex-basis:78%;min-width:0}
+  .vm video{max-height:calc(100vh - 170px)}
+}
+
 @media (max-width:760px){
   .rev-head{align-items:flex-start}
   .rev-sum{align-items:flex-start}
@@ -860,3 +898,262 @@ html.is-loading{overflow:hidden}
   nav img{height:36px!important}
 }
 .rev-score .rev-stars{color:#F7EFE4}
+
+
+/* ==== МОБИЛЬНАЯ ВЕРСИЯ 25.10.2026 ==== */
+
+/* элементы только для телефона — на десктопе их нет */
+.nav-call,.nav-burger,.mbar{display:none}
+.mnav[hidden]{display:none}
+
+/* ---- шапка: логотип, звонок и бургер ---- */
+@media (max-width:900px){
+  nav{grid-template-columns:1fr auto!important;padding:10px 40px!important;gap:12px!important}
+  nav .nav-menu,nav .nav-phone,nav a[aria-label="WhatsApp"],nav a[aria-label="Telegram"]{display:none!important}
+  nav img{height:40px!important}
+  .nav-call,.nav-burger{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+    border-radius:50%;border:1px solid rgba(238,228,211,.3);background:transparent;color:#EEE4D3;padding:0;cursor:pointer}
+  .nav-burger{flex-direction:column;gap:6px;background:#EEE4D3;border-color:#EEE4D3}
+  .nav-burger span{display:block;width:18px;height:1.5px;background:#223020;border-radius:2px;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .nav-burger:active{transform:none}
+  .nav-burger[aria-expanded="true"] span:first-child{transform:translateY(3.75px) rotate(45deg)}
+  .nav-burger[aria-expanded="true"] span:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+  section[id]{scroll-margin-top:64px}
+
+  /* меню на весь экран: под шапкой, чтобы бургер превращался в крестик на месте */
+  .mnav{position:fixed;inset:0;z-index:59;background:#223020;color:#EEE4D3;overflow:hidden;
+    padding:calc(65px + 8px) 20px calc(24px + env(safe-area-inset-bottom));
+    opacity:0;transition:opacity .35s ease}
+  .mnav.on{opacity:1}
+  .mnav-in{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:28px;overflow-y:auto}
+  .mnav-links{display:flex;flex-direction:column}
+  .mnav-links a{display:flex;align-items:baseline;gap:16px;padding:13px 0;border-bottom:1px solid rgba(238,228,211,.12);
+    font-family:Jost,sans-serif;font-weight:300;font-size:clamp(24px,7.2vw,32px);line-height:1.1;text-transform:uppercase;color:#EEE4D3;
+    opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .mnav-links a i{font-style:normal;font-size:12px;color:#7CA476;width:18px;flex:none}
+  .mnav.on .mnav-links a{opacity:1;transform:none}
+  .mnav-links a:nth-child(2){transition-delay:.03s}.mnav-links a:nth-child(3){transition-delay:.06s}
+  .mnav-links a:nth-child(4){transition-delay:.09s}.mnav-links a:nth-child(5){transition-delay:.12s}
+  .mnav-links a:nth-child(6){transition-delay:.15s}.mnav-links a:nth-child(7){transition-delay:.18s}
+  .mnav-foot{display:flex;flex-direction:column;gap:16px}
+  .mnav-tel{font-family:Jost,sans-serif;font-weight:300;font-size:28px;color:#EEE4D3}
+  .mnav-soc{display:flex;gap:8px}
+  .mnav-soc a{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 10px;
+    border-radius:999px;border:1px solid rgba(238,228,211,.3);color:#EEE4D3;font-size:15px}
+  .mnav-cta,.mbar-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:17px 24px;border:none;
+    border-radius:999px;background:#EEE4D3;color:#223020;font:inherit;font-size:16px;font-weight:500;cursor:pointer}
+  .mnav-cta i,.mbar-cta i{font-style:normal}
+  .mnav-trees{position:absolute;left:0;right:0;bottom:0;width:100%;opacity:.06;pointer-events:none}
+
+  /* панель «позвонить / заявка» внизу экрана */
+  .mbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:58;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:rgba(238,228,211,.86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    border-top:1px solid rgba(34,48,32,.1);
+    transform:translateY(110%);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .mbar.on{transform:none}
+  .mbar-call{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:0 20px;border-radius:999px;
+    border:1px solid rgba(34,48,32,.25);color:#223020;font-size:15px;font-weight:500}
+  .mbar-cta{padding:15px 20px;background:#223020;color:#F7EFE4;font-size:15px}
+  .mbar-call:active,.mbar-cta:active{transform:scale(.97)}
+}
+
+/* ---- телефон: общая сетка ---- */
+@media (max-width:760px){
+  nav{padding:10px 20px!important}
+  /* одни поля 20px на всех блоках */
+  /* JS переписывает inline-стили через element.style — тогда браузер ставит пробелы и px, ловим оба вида */
+  [style*="padding:120px 40px"],[style*="padding:0 40px"],[style*="padding:24px 40px 0"],
+  [style*="padding: 0px 40px"],[style*="padding: 120px 40px"],[style*="padding: 24px 40px 0px"],.atmo-inner{
+    padding-left:20px!important;padding-right:20px!important}
+  #contacts>div[style*="left:40px"]{left:20px!important;right:20px!important}
+  /* единый ритм: 64 — между блоками, 56 — между частями блока, 32 — от заголовка до содержимого */
+  [data-screen-label][style*="padding:0 40px 120px"]{padding-bottom:64px!important}
+  [data-screen-label][style*="padding:120px"]{padding-top:64px!important;padding-bottom:64px!important}
+  [data-screen-label][style*="margin-bottom:120px"]{margin-bottom:64px!important}
+  #reviews{padding:64px 0!important}
+  #contacts{padding-top:64px!important}
+  [data-screen-label] [style*="margin-top:80px"],[data-screen-label] [style*="margin-top:88px"],
+  [data-screen-label] [style*="margin-top: 80px"],[data-screen-label] [style*="margin-top: 88px"],
+  [data-screen-label] [style*="margin-top:56px"],[data-screen-label] [style*="margin-top: 56px"]{margin-top:32px!important}
+  [data-screen-label] [style*="margin-top:120px"],[data-screen-label] [style*="margin-top: 120px"],
+  [data-screen-label] [style*="margin-top:150px"],[data-screen-label] [style*="margin-top: 150px"],
+  [data-screen-label] [style*="margin:100px auto 0"],[data-screen-label] [style*="margin: 100px auto 0px"]{margin-top:56px!important}
+  .sec-cta{margin-top:48px!important;padding-top:28px!important}
+  .lbl{margin-bottom:2px}
+
+  /* фото во всю ширину экрана: без полей и скруглений, дуга на углу остаётся */
+  .m-bleed{margin-left:-20px!important;margin-right:-20px!important;width:auto!important;border-radius:0!important}
+  .m-bleed.arc-tl{border-top-left-radius:var(--arc)!important}
+  .m-bleed.arc-tr{border-top-right-radius:var(--arc)!important}
+  .arc{--arc:56px}.arc-s{--arc:40px}
+  .m-43{height:auto!important;aspect-ratio:4/3}
+  .m-45{height:auto!important;aspect-ratio:4/5}
+
+  /* сетки карточек — лента, которая листается пальцем; соседняя карточка выглядывает */
+  [data-screen-label] .m-swipe.m-swipe{display:flex!important;gap:12px!important;overflow-x:auto;
+    scroll-snap-type:x mandatory;scrollbar-width:none;margin-left:-20px;margin-right:-20px;
+    padding:0 20px 4px;scroll-padding:0 20px;-webkit-overflow-scrolling:touch}
+  .m-swipe::-webkit-scrollbar{display:none}
+  .m-swipe>*{flex:0 0 84%;scroll-snap-align:start;min-width:0}
+  /* точки под лентой: сколько карточек и где мы; при первом показе лента «подмигивает» */
+  .m-dots{display:flex;justify-content:center;gap:6px;margin-top:16px}
+  .m-dots i{width:6px;height:6px;border-radius:3px;background:currentColor;opacity:.22;
+    transition:width .35s cubic-bezier(.2,.8,.2,1),opacity .35s ease}
+  .m-dots i.on{width:20px;opacity:.7}
+  .nudge>*{animation:m-nudge 1.1s cubic-bezier(.4,0,.2,1)}
+  @keyframes m-nudge{0%,100%{transform:none}45%{transform:translateX(-44px)}}
+
+  /* табы — одной строкой по ширине экрана, от левого края, всё видно сразу */
+  .m-tabs,.walk-tabs{flex-wrap:nowrap!important;gap:6px!important;width:100%}
+  .m-tabs>*,.walk-tabs>*{flex:1 1 auto;white-space:nowrap;text-align:center;
+    padding:11px 10px!important;font-size:13px!important}
+}
+
+/* ---- телефон: блоки ---- */
+@media (max-width:760px){
+  /* hero: фото на весь первый экран, заголовок и кнопка поверх */
+  #hero{position:relative;min-height:calc(100svh - 65px)!important;justify-content:flex-end}
+  #hero .hero-media{position:absolute!important;inset:0;min-height:0!important}
+  #hero .hero-media img{object-position:62% 50%}
+  #hero .hero-shade{background:linear-gradient(180deg,rgba(11,32,18,.1) 0,rgba(11,32,18,0) 30%,rgba(11,32,18,.55) 62%,rgba(11,32,18,.9) 100%)}
+  #hero .hero-copy{z-index:2;padding:0 20px 28px!important}
+  #hero h1{font-size:clamp(30px,9vw,40px)!important;line-height:1.02!important;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+  .hero-cta{width:100%}
+  .hero-cta .cta-label{flex:1;text-align:center;padding:16px 24px}
+  .hero-cta .cta-arrow{width:52px;height:52px}
+
+  /* цифры — карточки друг под другом: число слева, подпись справа */
+  [data-screen-label] .nums.nums{gap:10px!important;padding-top:0!important;border-top:none!important}
+  .nums>div{display:flex;align-items:center;gap:20px;padding:22px 22px;
+    border:1px solid rgba(34,48,32,.14);background:rgba(255,255,255,.5);border-radius:10px}
+  .nums>div>div:first-child{flex:0 0 112px;font-size:52px!important}
+  .nums>div>div:last-child{margin-top:0!important;font-size:14px!important;max-width:none!important}
+
+  /* каталог */
+  .fmt-grid{gap:44px!important}
+  .fmt-photo{height:auto;aspect-ratio:4/3}
+  .fmt-head{margin-top:16px;flex-wrap:wrap;gap:4px 12px}
+  .fmt-title{font-size:20px}
+  .pick-photo{min-height:340px!important;padding:32px 20px!important}
+  .pick form{padding:32px 20px 36px!important}
+  .pick form input,.pick form .phone-row{max-width:none}
+  .pick form .cta,.band-form .cta,.contact-form .cta{align-self:stretch!important}
+  .pick form .cta-label,.band-form .cta-label,.contact-form .cta-label{flex:1;text-align:center;white-space:nowrap}
+
+  /* генплан: план не ужимаем, а листаем пальцем */
+  .gp-pane{margin:0 -20px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .gp-pane::-webkit-scrollbar{display:none}
+  .gp-map{width:200%;border-radius:0!important}
+  .pin-tree{width:40px!important;height:40px!important}
+  .pin-tree svg{width:11px!important}
+  .pin-tree span{font-size:14px!important}
+  .gp-pane::after{content:"← листайте план →";display:block;padding:12px 20px 0;font-size:12px;color:rgba(238,228,211,.5);text-align:center;position:sticky;left:0;width:100vw}
+  .genplan-aside{gap:14px!important;padding-top:24px!important}
+  .genplan-aside>div:nth-child(2){font-size:52px!important}
+  .genplan-aside>div:nth-child(3){margin-top:-8px!important}
+  .genplan-aside .cta{margin-top:8px!important}
+
+  /* видео с формой: заголовок на видео, форма плашкой ниже */
+  .band{min-height:0!important}
+  .band>.band-grid{padding:56px 20px 20px!important;gap:28px!important}
+  .band-copy h2{font-size:clamp(28px,8vw,36px)!important}
+  .band-form{margin:0!important;padding:28px 22px!important}
+  .band-form>div:first-child{font-size:26px!important}
+  .band-form .cta-label{padding:14px 18px!important;font-size:14px!important}
+
+  /* стройка */
+  .prog-grid{gap:32px!important}
+  .prog-grid>div>div:first-child{height:auto!important;aspect-ratio:4/3}
+
+  /* окружение */
+  .env-stage>picture,.env-stage>picture img{height:auto!important}
+  .env-stage>picture{aspect-ratio:4/3;overflow:hidden}
+  .env-cards{padding:12px 12px 20px!important}
+  #env .ways{grid-template-columns:minmax(0,1fr)!important;gap:10px!important;grid-auto-rows:auto}
+  .way{gap:18px;padding:18px 20px;min-height:0;border-radius:10px}
+  .way-body{gap:4px}
+  .way-body>span:first-child{font-size:30px!important}
+  .way-body>span:last-child{font-size:14px!important;line-height:1.45!important}
+  .map-wrap{height:360px!important}
+  .tour{height:auto!important;aspect-ratio:4/3}
+
+  /* прогулка: кнопку — в конец блока, после фото и фактов */
+  .walk-bar{display:contents}
+  .walk-cta{order:10;margin-top:8px}
+  .walk-cta .cta{width:100%}
+  .walk-cta .cta-label{flex:1;text-align:center}
+  .walk-stage{aspect-ratio:4/3}
+
+  /* покупка */
+  .buy-card{padding:26px 22px 24px;gap:12px}
+  .buy-rate{font-size:38px}
+
+  /* акции: белка живёт курсором — на телефоне её нет, остаётся список */
+  .promo-lead,.promo-media{display:none}
+  .promo-stage.m-bleed{margin:32px 0 0!important;border-radius:10px!important}
+  .promo-panel{padding:24px 20px 28px}
+  .promo-cta{align-self:stretch}
+  .promo-cta .cta-label{flex:1;text-align:center;padding:14px 22px}
+
+  /* атмосфера */
+  [data-screen-label="12 Атмосфера"]{min-height:calc(100svh - 65px)!important}
+  .atmo-cta .cta-label-ghost{white-space:nowrap}
+
+  /* качество: фото → свой список → фото → свой список */
+  .q-body{display:flex;flex-direction:column}
+  .q-body .q-photos,.q-body .q-specs{display:contents!important}
+  .q-photos>div{height:auto!important;aspect-ratio:4/3;margin:0 -20px;border-radius:0!important}
+  .q-photos>.arc-tl{border-top-left-radius:var(--arc)!important}
+  .q-photos>.arc-br{border-bottom-right-radius:var(--arc)!important}
+  .q-photos>div:first-child{order:1;margin-top:32px}
+  .q-specs>div:first-child{order:2;margin-top:24px}
+  .q-photos>div:last-child{order:3;margin-top:40px}
+  .q-specs>div:last-child{order:4;margin-top:24px}
+  .q-body>div:last-child{order:5}
+  #quality .m-swipe>div>div:last-child{padding:22px 20px!important}
+  #quality .m-swipe>div>div:first-child{height:200px!important}
+
+  /* CTA в конце блоков — по центру */
+  .sec-cta{align-items:center!important;text-align:center}
+  .sec-cta-text{max-width:30ch}
+
+  /* инфраструктура, застройщик */
+  .infra-photo{height:auto!important;aspect-ratio:4/3}
+  .infra-list>div{font-size:19px!important}
+  .infra-list{gap:18px!important}
+  .dev-grid>div:last-child{height:auto!important;aspect-ratio:4/3}
+  .dev-grid h2 span{padding-left:0!important}
+
+  /* карусели: стрелки не нужны, листаем пальцем; лента от края до края */
+  .gal-track{margin:0 -20px;padding:0 20px 2px;scroll-padding:0 20px;gap:12px}
+  .gal-card{flex-basis:84%;height:auto;aspect-ratio:4/3}
+  .gal-nav{display:none}
+  .vrev{flex-basis:70%}
+  [data-pane="video"]{height:auto!important;aspect-ratio:4/5}
+  .vrev-lead{font-size:15px}
+
+  /* контакты */
+  #contacts h2+div a[style*="font-size:32px"]{font-size:28px!important}
+  .c-soc a{flex:1;justify-content:center;padding:14px 12px!important}
+  .contact-form{padding:28px 22px!important}
+  .legal{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+
+  /* попапы — шторкой снизу, как в приложениях */
+  .doc{align-items:flex-end;padding:0}
+  .doc-box{max-height:92svh;border-radius:20px 20px 0 0;overflow:hidden;
+    transform:translateY(40px);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .doc.on .doc-box{transform:none}
+  .doc-box::before{content:"";position:absolute;top:8px;left:50%;width:40px;height:4px;margin-left:-20px;
+    border-radius:4px;background:rgba(34,48,32,.18)}
+  .doc-x{top:14px;right:14px}
+  .cb-head{padding:40px 22px 14px}
+  .cb-head h3{font-size:28px}
+  .cb-form{padding:6px 22px calc(28px + env(safe-area-inset-bottom))}
+}
+@media (max-width:760px) and (prefers-reduced-motion:reduce){.doc-box{transition:none;transform:none}}
+/* без мыши подсказка про курсор не нужна */
+@media (hover:none),(pointer:coarse){.on-mouse{display:none}}
+/* самые узкие телефоны: табы прогулки и хроники ещё компактнее, чтобы влезли целиком */
+@media (max-width:380px){.m-tabs>*,.walk-tabs>*{padding:10px 7px!important;font-size:12.5px!important}}

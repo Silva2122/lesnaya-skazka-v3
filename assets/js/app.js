@@ -220,7 +220,7 @@
 
   /* ------------------------------------------------------------ карусели фото */
   function step(track) {
-    var card = track.querySelector('.gal-card');
+    var card = track.querySelector('.gal-card, .vrev');
     if (!card) return track.clientWidth;
     var gap = parseFloat(getComputedStyle(track).gap) || 20;
     return card.getBoundingClientRect().width + gap;
@@ -310,6 +310,109 @@
     var card = e.target.closest('.gal-card');
     if (card) lbOpen(card);
   });
+
+
+  /* ------------------------------------------------------------ видеоотзывы */
+  // В карточках крутятся беззвучные фрагменты — только пока блок рядом с экраном
+  // (проверка по скроллу, как у появления блоков: без IntersectionObserver).
+  var vrevs = $$('.vrev');
+  var vrevMotion = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var vm = null, vmList = [], vmAt = 0;
+
+  function vrevSync() {
+    if (!vrevs.length) return;
+    var vh = window.innerHeight || 800;
+    var r = vrevs[0].closest('.vrev-gal').getBoundingClientRect();
+    var near = vrevMotion && (!vm || vm.hidden) && r.bottom > -200 && r.top < vh + 200;
+    vrevs.forEach(function (card) {
+      var v = card.querySelector('video');
+      if (near && v.paused) {
+        v.muted = true;
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      } else if (!near && !v.paused) {
+        v.pause();
+      }
+    });
+  }
+
+  function vmBuild() {
+    vm = document.createElement('div');
+    vm.className = 'lb vm';
+    vm.hidden = true;
+    vm.setAttribute('role', 'dialog');
+    vm.setAttribute('aria-modal', 'true');
+    vm.innerHTML =
+      '<div class="lb-count"></div><video controls playsinline preload="auto"></video><div class="lb-cap"></div>' +
+      '<button class="lb-btn lb-close" aria-label="Закрыть">&#10005;</button>' +
+      '<button class="lb-btn lb-prev" aria-label="Предыдущее видео">&#8592;</button>' +
+      '<button class="lb-btn lb-next" aria-label="Следующее видео">&#8594;</button>';
+    document.body.appendChild(vm);
+    vm.querySelector('.lb-close').addEventListener('click', vmClose);
+    vm.querySelector('.lb-prev').addEventListener('click', function () { vmGo(-1); });
+    vm.querySelector('.lb-next').addEventListener('click', function () { vmGo(1); });
+    vm.addEventListener('click', function (e) { if (e.target === vm) vmClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (vm.hidden) return;
+      if (e.key === 'Escape') vmClose();
+      if (e.key === 'ArrowLeft') vmGo(-1);
+      if (e.key === 'ArrowRight') vmGo(1);
+    });
+  }
+
+  function vmShow() {
+    var card = vmList[vmAt];
+    var v = vm.querySelector('video');
+    v.poster = card.dataset.poster || '';
+    v.src = card.dataset.video;
+    v.setAttribute('aria-label', 'Видеоотзыв: ' + card.dataset.name);
+    vm.querySelector('.lb-cap').textContent = card.dataset.name;
+    vm.querySelector('.lb-count').textContent = (vmAt + 1) + ' / ' + vmList.length;
+    v.muted = false;
+    var p = v.play();
+    // если браузер не дал запустить со звуком — запускаем без звука, звук включат на панели
+    if (p && p.catch) p.catch(function () { v.muted = true; v.play().catch(function () {}); });
+  }
+
+  function vmGo(d) {
+    vmAt = (vmAt + d + vmList.length) % vmList.length;
+    vmShow();
+  }
+
+  function vmOpen(card) {
+    if (!vm) vmBuild();
+    vmList = vrevs;
+    vmAt = vmList.indexOf(card);
+    vm.hidden = false;
+    vrevSync();                          // фрагменты в карточках ставим на паузу
+    vmShow();
+    document.body.style.overflow = 'hidden';
+    void vm.offsetWidth;
+    vm.classList.add('on');
+    vm.querySelector('.lb-close').focus();
+  }
+
+  function vmClose() {
+    var v = vm.querySelector('video');
+    v.pause();
+    vm.classList.remove('on');
+    document.body.style.overflow = '';
+    setTimeout(function () {
+      vm.hidden = true;
+      v.removeAttribute('src'); v.load();
+      vrevSync();
+      vmList[vmAt] && vmList[vmAt].focus();
+    }, 250);
+  }
+
+  vrevs.forEach(function (card) {
+    card.addEventListener('click', function () { vmOpen(card); });
+  });
+  window.addEventListener('scroll', vrevSync, { passive: true });
+  window.addEventListener('resize', vrevSync);
+  window.addEventListener('load', vrevSync);
+  document.addEventListener('visibilitychange', vrevSync);
+  vrevSync();
 
 
   /* ------------------------------------------------------------ документы */
@@ -804,6 +907,8 @@
     var mq = window.matchMedia;
     var reduced = mq && mq('(prefers-reduced-motion: reduce)').matches;
     var coarse = mq && mq('(pointer: coarse)').matches;
+    // на телефоне белки нет (следить ей не за чем) — 7 МБ кадров не тянем
+    if (mq && mq('(max-width: 760px)').matches) return;
 
     var N = 240;
     var HOME = 216;                         // анфас — стартовый кадр
@@ -1059,7 +1164,99 @@
     setTimeout(preHide, MAX);
   }
 
+  /* ------------------------------------------------------------ телефон */
+  // Меню-бургер: шапка остаётся сверху, меню открывается под ней на весь экран
+  var burger = document.querySelector('.nav-burger'), mnav = document.getElementById('mnav');
+  function mnavSet(open) {
+    if (!burger || !mnav) return;
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      mnav.hidden = false;
+      void mnav.offsetWidth;
+      mnav.classList.add('on');
+    } else {
+      mnav.classList.remove('on');
+      setTimeout(function () { if (!mnav.classList.contains('on')) mnav.hidden = true; }, 350);
+    }
+  }
+  if (burger && mnav) {
+    burger.addEventListener('click', function () { mnavSet(mnav.hidden); });
+    // пункт меню или кнопка заявки: меню закрываем, дальше браузер/попап делают своё
+    mnav.addEventListener('click', function (e) { if (e.target.closest('a,button')) mnavSet(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !mnav.hidden) mnavSet(false); });
+    window.addEventListener('resize', function () { if (!mnav.hidden && window.innerWidth > 900) mnavSet(false); });
+  }
+
+  // Панель «Позвонить / Заявка»: появляется после первого экрана,
+  // уходит у контактов — там те же кнопки уже есть
+  var mbar = document.querySelector('.mbar');
+  var heroEl = document.getElementById('hero'), contactsEl = document.getElementById('contacts');
+  function mbarCheck() {
+    if (!mbar) return;
+    var past = heroEl ? heroEl.getBoundingClientRect().bottom < 0 : window.scrollY > 600;
+    var atEnd = contactsEl ? contactsEl.getBoundingClientRect().top < window.innerHeight : false;
+    var on = past && !atEnd;
+    if (on === mbar.classList.contains('on')) return;
+    mbar.classList.toggle('on', on);
+    mbar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    mbar.querySelectorAll('a,button').forEach(function (el) { el.tabIndex = on ? 0 : -1; });
+  }
+  window.addEventListener('scroll', mbarCheck, { passive: true });
+  window.addEventListener('resize', mbarCheck);
+
+  // Генплан на телефоне шире экрана — открываем его на середине, где больше домов
+  var gpPane = document.querySelector('.gp-pane'), gpW = 0;
+  function gpCenter() {
+    if (!gpPane || window.innerWidth === gpW) return;
+    gpW = window.innerWidth;
+    gpPane.scrollLeft = (gpPane.scrollWidth - gpPane.clientWidth) / 2;
+  }
+  window.addEventListener('resize', gpCenter);
+
+  // Ленты, которые листаются пальцем: точки под лентой показывают, сколько карточек
+  // и где мы, а при первом появлении лента коротко сдвигается — видно, что она живая
+  var phone = window.matchMedia && window.matchMedia('(max-width: 760px)');
+  var stillMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var swipes = [];
+  if (phone && phone.matches) {
+    document.querySelectorAll('.m-swipe, .gal-track').forEach(function (track) {
+      var n = track.children.length;
+      if (n < 2) return;
+      var dots = document.createElement('div');
+      dots.className = 'm-dots';
+      dots.setAttribute('aria-hidden', 'true');
+      for (var i = 0; i < n; i++) dots.appendChild(document.createElement('i'));
+      var host = track.closest('.gal') || track;
+      host.parentNode.insertBefore(dots, host.nextSibling);
+      function mark() {
+        var step = track.children[1].offsetLeft - track.children[0].offsetLeft || 1;
+        var at = Math.round(track.scrollLeft / step);
+        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) at = n - 1;
+        for (var k = 0; k < n; k++) dots.children[k].classList.toggle('on', k === at);
+      }
+      track.addEventListener('scroll', mark, { passive: true });
+      mark();
+      swipes.push({ track: track, done: stillMotion });
+    });
+  }
+  function swipeNudge() {
+    swipes.forEach(function (s) {
+      if (s.done || s.track.offsetParent === null) return;
+      var r = s.track.getBoundingClientRect();
+      if (r.top > window.innerHeight * 0.75 || r.bottom < 0) return;
+      s.done = true;
+      if (s.track.scrollLeft > 0) return;
+      s.track.classList.add('nudge');
+      setTimeout(function () { s.track.classList.remove('nudge'); }, 1200);
+    });
+  }
+  window.addEventListener('scroll', swipeNudge, { passive: true });
+
   /* ------------------------------------------------------------ старт */
+  gpCenter();
+  mbarCheck();
   render();
   kickVideo();
   [300, 1200].forEach(function (t) { setTimeout(kickVideo, t); });
